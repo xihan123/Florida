@@ -125,16 +125,16 @@ jobs:
         local-cache: false
         link-to-sdk: true
 
-    - name: Set up Python 3.9
+    - name: Set up Python 3.12
       uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: "3.12"
 
     - name: install dependencies
       run: |
         sudo apt-get update && DEBIAN_FRONTEND=noninteractive sudo apt-get install build-essential tree ninja-build gcc-multilib g++-multilib lib32stdc++-9-dev flex bison ruby ruby-dev python3-requests python3-setuptools python3-dev python3-pip libc6-dev libc6-dev-i386 -y
         sudo gem install fpm -v 1.11.0 --no-document
-        python3 -m pip install lief graphlib
+        python3 -m pip install lief
 
     - name: build frida for Android
       shell: bash
@@ -145,7 +145,7 @@ jobs:
         export ANDROID_NDK_ROOT=${{ steps.setup-ndk.outputs.ndk-path }}
         echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
         
-        git clone --recurse-submodules https://github.com/frida/frida
+        git clone --recurse-submodules --branch "${{ needs.check_version.outputs.FRIDA_VERSION }}" https://github.com/frida/frida
         cd frida
         for path in ../patches/*
         do
